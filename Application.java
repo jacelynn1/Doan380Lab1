@@ -7,31 +7,31 @@ public class Application {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // loop to run program until user wants to exit
+        // use a loop to keep the calculator running until the user exits
         while (true) {
-            System.out.println("\nEnter operation (add, subtract, multiply, divide, pow, sqrt, log, log10, sin, cos, tan, factorial) or 'exit' to quit:");
+        	// display available options
+            System.out.println("\nEnter operation (add, subtract, multiply, divide, pow, sqrt, log, log10, sin, cos, tan, factorial, permutation) or 'exit' to quit:");
             String operation = scanner.next();
-
+            
+            // exit option
             if (operation.equalsIgnoreCase("exit")) {
                 System.out.println("Exiting calculator, thanks!");
                 break;
             }
 
-            // operations that require 2 inputs
+            // check if operation requires 2 inputs
             if (!operation.equalsIgnoreCase("sqrt") && !operation.equalsIgnoreCase("log") &&
                 !operation.equalsIgnoreCase("log10") && !operation.equalsIgnoreCase("sin") &&
                 !operation.equalsIgnoreCase("cos") && !operation.equalsIgnoreCase("tan") &&
-                !operation.equalsIgnoreCase("factorial")) {
-                System.out.print("Enter first number: ");
+                !operation.equalsIgnoreCase("factorial") && !operation.equalsIgnoreCase("permutation")) {
+                System.out.print("Enter first number: ");	// ask user for two inputs
                 double num1 = scanner.nextDouble();
                 System.out.print("Enter second number: ");
                 double num2 = scanner.nextDouble();
 
-                double result = 0;
-                boolean validOperation = true;
-                
-                // case switch is used to determine which operation is chosen based on user input
-                switch (operation.toLowerCase()) {
+                double result = 0;	// store result of the operation
+                boolean validOperation = true; // indicator is operation is valid 
+                switch (operation.toLowerCase()) { // calculate operation based on which case input chooses 
                     case "add":
                         result = num1 + num2;
                         break;
@@ -53,7 +53,7 @@ public class Application {
                         break;
                 }
 
-                if (validOperation) {
+                if (validOperation) {	// display result if operation was valid 
                     System.out.println("Result: " + result);
                 }
             } else {
@@ -61,8 +61,8 @@ public class Application {
                 System.out.print("Enter number: ");
                 double num = scanner.nextDouble();
 
-                double result = 0;
-                boolean valid = true;
+                double result = 0; 	// variable to store result
+                boolean validOperation = true;
                 switch (operation.toLowerCase()) {
                     case "sqrt":
                         result = sqrt(num);
@@ -85,13 +85,28 @@ public class Application {
                     case "factorial":
                         result = factorial((int)num);
                         break;
+                    case "permutation":
+                        // permutations require two inputs
+                        System.out.print("\nEnter the number of inputs: ");
+                        int n = (int)num;
+                        System.out.print("\nEnter the number of inputs to choose: ");
+                        int r = scanner.nextInt();
+                        // check it input is valid
+                        if (n >= 0 && r >= 0 && r <= 100 && r <= n) {
+                        	// calc and display perms using recursion and iteration
+                            System.out.println("Permutation (recursive): " + permRecursive(n, r));
+                            System.out.println("Permutation (iterative): " + permIterative(n, r));
+                        } else {
+                            System.out.println("Invalid input for permutation.");
+                        }
+                        break;
                     default:
-                        valid = false;
-                        System.out.println("invalid operation.");
+                        validOperation = false;
+                        System.out.println("Invalid operation.");
                         break;
                 }
-                // if operation is valid then print the result
-                if (valid) {
+
+                if (validOperation) {	// display result if operation is valid
                     System.out.println("Result: " + result);
                 }
             }
@@ -99,8 +114,8 @@ public class Application {
 
         scanner.close();
     }
-    
-    // method for division and invalid division entries
+
+    // division method, errors when trying to divide by zero
     private static double divide(double num1, double num2) {
         if (num2 != 0) {
             return num1 / num2;
@@ -144,25 +159,41 @@ public class Application {
         return Math.tan(angleRadians);
     }
     
-    // factorial calculation with progress display
+    // factorial calc with progress display
     public static long factorial(int num) {
         if (num < 0) {
             System.out.println("Factorial of negative number is undefined.");
             return 0;
         }
-        long result = factorialHelper(num, num);
+        long result = factorialHelp(num, num);
         System.out.println("\rCalculating factorial: 100%");
         return result;
     }
     
-    // helper method for factorial calc with progress delay
-    private static long factorialHelper(int originalNum, int num) {
+    // helper method for recursive factorial calc
+    private static long factorialHelp(int origNum, int num) {
         if (num <= 1) {
             return 1;
         }
-        // calc progress and update progress bar
-        int progress = (int) (((originalNum - num + 1) / (double) originalNum) * 100);
+        int progress = (int) (((origNum - num + 1) / (double) origNum) * 100);
         System.out.print("\rCalculating factorial: " + progress + "%");
-        return num * factorialHelper(originalNum, num - 1);
+        return num * factorialHelp(origNum, num - 1);
+    }
+
+    // permutation using recursion
+    public static long permRecursive(int i, int k) {
+        if (i == 0) {
+            return 1;
+        }
+        return k * permRecursive(i - 1, r - 1);
+    }
+
+    // permutations using iteration
+    public static long permIterative(int j, int y) {
+        long result = 1;
+        for (int i = 0; i < y; i++) {
+            result *= (j - i);
+        }
+        return result;
     }
 }
